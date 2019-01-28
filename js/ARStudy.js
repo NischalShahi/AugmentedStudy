@@ -15,18 +15,34 @@ import {
     ViroSpotLight,
     ViroQuad,
 } from 'react-viro';
+import * as firebase from "react-native-firebase";
 
 var createReactClass = require('create-react-class');
 
 
 var ARStudy = createReactClass({
+    // componentDidMount(){
+    //     firebase.database().ref('Animal/').once('value', function (snapshot) {
+    //         const db = snapshot.val();
+    //
+    //         const arr = Object.keys(db).map(key => {
+    //             const value = db[key];
+    //             value.id = key;
+    //
+    //             return value;
+    //         });
+    //
+    //         console.log(arr)
+    //     });
+    // },
+
     getInitialState() {
         return {
             texture: "deer",
-            textureCat: "cat",
+            textureGiraffe: "giraffe",
             playAnim: false,
             animateDeer: false,
-            animateCat: false
+            animateGiraffe: false
         }
     },
 
@@ -42,12 +58,11 @@ var ARStudy = createReactClass({
 
                     <Viro3DObject
                         scale={[0,0,0]}
-                        source={require('./res/tesla/Deer_o.obj')}
-                        resources={[require('./res/tesla/Deer_m.mtl'),
+                        source={{uri: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/obj%2FDeer_o.obj?alt=media&token=248802fa-03c6-46a2-af0c-50897f971df7"}}
+                        resources={[{uri: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/mtl%2FDeer_m.mtl?alt=media&token=ee465c8d-9a57-4c1e-9916-58a44e080135"},
                         ]}
                         type="OBJ"
                         materials={this.state.texture}
-                        onClick={this._toggleButtons}
                         animation={{name:"scaleDeer", run:this.state.animateDeer,}} />
 
                     <ViroSpotLight
@@ -70,18 +85,18 @@ var ARStudy = createReactClass({
 
                 </ViroARImageMarker>
 
-                <ViroARImageMarker target={"cat"} onAnchorFound={this._onAnchorCat} pauseUpdates={this.state.pauseUpdates}>
+                <ViroARImageMarker target={"giraffe"} onAnchorFound={this._onAnchorGiraffe} pauseUpdates={this.state.pauseUpdates}>
                     <ViroNode scale={[0, 0, 0]} transformBehaviors={["billboardY"]} animation={{name:this.state.animName, run:this.state.playAnim,}}>
                     </ViroNode>
 
                     <Viro3DObject
                         scale={[0,0,0]}
-                        source={require('./res/cat/cat_o.obj')}
-                        resources={[require('./res/cat/cat_m.mtl'),
+                        source={{uri:"https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/obj%2F10021_Giraffe_v04.obj?alt=media&token=f137167b-73ed-46e4-a2b2-1231d6d470b5"}}
+                        resources={[{uri:"https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/mtl%2F10021_Giraffe_v04.mtl?alt=media&token=29444c30-e5ab-4eb4-91a1-2d1fbc0852b8"},
                         ]}
                         type="OBJ"
-                        materials={this.state.textureCat}
-                        animation={{name:"scaleCat", run:this.state.animateCat,}} />
+                        materials={this.state.textureGiraffe}
+                        animation={{name:"scaleGiraffe", run:this.state.animateGiraffe,}} />
 
                     <ViroSpotLight
                         innerAngle={5}
@@ -112,15 +127,9 @@ var ARStudy = createReactClass({
         })
     },
 
-    _onAnchorCat() {
+    _onAnchorGiraffe() {
         this.setState({
-            animateCat: true,
-        })
-    },
-    _toggleButtons() {
-        this.setState({
-            animName: (this.state.animName == "scaleUp" ? "scaleDown" : "scaleUp"),
-            playAnim: true
+            animateGiraffe: true,
         })
     },
 });
@@ -128,39 +137,31 @@ var ARStudy = createReactClass({
 ViroMaterials.createMaterials({
     deer: {
         lightingModel: "PBR",
-        diffuseTexture: require('./res/tesla/Diffuse.jpg'),
-        metalnessTexture: require('./res/tesla/Specular.png'),
-        roughnessTexture: require('./res/tesla/Glossiness.png'),
+        diffuseTexture: ({uri: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/diffuse%2Fdeer_defuse.jpg?alt=media&token=ba064ede-82f0-4e49-9128-8989010d7778"})
     },
-    cat: {
+    giraffe: {
         lightingModel: "PBR",
-        diffuseTexture: require('./res/cat/catDiffuse.jpg'),
-        metalnessTexture: require('./res/tesla/Specular.png'),
-        roughnessTexture: require('./res/tesla/Glossiness.png'),
+        diffuseTexture: ({uri:"https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/diffuse%2F10021_Giraffe_v05.jpg?alt=media&token=f36bd8fe-90d6-4a3b-baf4-32e872695cda"}),
     },
 });
 
 ViroARTrackingTargets.createTargets({
     deer : {
-        source : require('./res/d2a.jpg'),
+        source : ({uri: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/targets%2Fdeer.jpg?alt=media&token=3b7f3847-4479-4ec8-9ef0-c75281411d82"}),
         orientation : "Up",
         physicalWidth : 0.065 // real world width in meters
     },
-    cat : {
-        source : require('./res/cat/catimage.png'),
+    giraffe : {
+        source : ({uri:"https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/targets%2Fgiraffe.jpg?alt=media&token=9a11cd71-3a89-4a6b-8790-a51467ee94c4"}),
         orientation : "Up",
         physicalWidth : 0.065
     }
 });
 
 ViroAnimations.registerAnimations({
-    scaleUp:{properties:{scaleX:1, scaleY:1, scaleZ:1,},
+    scaleDeer:{properties:{scaleX:.3, scaleY:.3, scaleZ:.3, rotateX: "+=0"},
         duration: 500, easing: "bounce"},
-    scaleDown:{properties:{scaleX:0, scaleY:0, scaleZ:0,},
-        duration: 200,},
-    scaleDeer:{properties:{scaleX:.3, scaleY:.3, scaleZ:.3},
-        duration: 500, easing: "bounce"},
-    scaleCat:{properties:{scaleX:.01, scaleY:.01, scaleZ:.01, rotateX: "+=270"},
+    scaleGiraffe:{properties:{scaleX:.003, scaleY:.003, scaleZ:.003, rotateX: "-=50"},
         duration: 500, easing: "bounce"},
 });
 
