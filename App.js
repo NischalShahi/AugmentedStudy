@@ -1,13 +1,5 @@
-/**
- * Copyright (c) 2017-present, Viro, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
-
 import React, { Component } from 'react';
+import {Image} from 'react-native';
 import {
   AppRegistry,
   Text,
@@ -18,30 +10,27 @@ import {
 } from 'react-native';
 
 import {
-  ViroVRSceneNavigator,
   ViroARSceneNavigator
 } from 'react-viro';
+import * as firebase from "react-native-firebase";
 
-/*
- TODO: Insert your API key below
- */
+
 var sharedProps = {
   apiKey:"584284A4-EA24-4BB5-93E2-AD8FF10043FA",
 }
 
-// Sets the default scene you want for AR and VR
-var InitialARScene = require('./js/ARStudy');
-var InitialVRScene = require('./js/HelloWorldScene');
+var InitialARScene;
 
 var UNSET = "UNSET";
-var VR_NAVIGATOR_TYPE = "VR";
 var AR_NAVIGATOR_TYPE = "AR";
 
-// This determines which type of experience to launch in, or UNSET, if the user should
-// be presented with a choice of AR or VR. By default, we offer the user a choice.
 var defaultNavigatorType = UNSET;
 
 export default class ViroSample extends Component {
+  state = {
+    initialized: false
+  }
+
   constructor() {
     super();
 
@@ -51,48 +40,63 @@ export default class ViroSample extends Component {
     }
     this._getExperienceSelector = this._getExperienceSelector.bind(this);
     this._getARNavigator = this._getARNavigator.bind(this);
-    this._getVRNavigator = this._getVRNavigator.bind(this);
-    this._getExperienceButtonOnPress = this._getExperienceButtonOnPress.bind(this);
-    this._exitViro = this._exitViro.bind(this);
+    this._navigate = this._navigate.bind(this);
   }
 
-  // Replace this function with the contents of _getVRNavigator() or _getARNavigator()
-  // if you are building a specific type of experience.
+  componentDidMount(){
+    const fData = firebase.database().ref();
+    fData.on('value',snap => {
+
+      let assets = snap.toJSON();
+
+      Object.keys(assets).map((key, index) => {
+        const myItem = assets[key];
+        const data = Object.values( myItem );
+
+        InitialARScene = require('./js/ARStudy')(data);
+
+        console.log(data);
+
+        this.setState({
+          initialized: true
+        })
+      });
+    })
+  }
+
   render() {
+
+    if (!this.state.initialized) return <View><Text>Loading</Text></View>
+
     if (this.state.navigatorType == UNSET) {
       return this._getExperienceSelector();
-    } else if (this.state.navigatorType == VR_NAVIGATOR_TYPE) {
-      return this._getVRNavigator();
     } else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
       return this._getARNavigator();
     }
   }
 
-  // Presents the user with a choice of an AR or VR experience
   _getExperienceSelector() {
     return (
-      <View style={localStyles.outer} >
-        <View style={localStyles.inner} >
+        <View style={localStyles.outer} >
+          <View style={localStyles.inner} >
+            <View style={localStyles.screenImageContainer}>
+            <Image
+                style={localStyles.image}
+                source={require('./assets/animalicon.jpg')}
+            />
+            </View>
+            <Text style={localStyles.titleText}>
+              Are you ready for education with AR?
+            </Text>
 
-          <Text style={localStyles.titleText}>
-            Choose your desired experience:
-          </Text>
+            <TouchableHighlight style={localStyles.buttons}
+              onPress={this._navigate(AR_NAVIGATOR_TYPE)}
+              underlayColor={'#68a0ff'} >
 
-          <TouchableHighlight style={localStyles.buttons}
-            onPress={this._getExperienceButtonOnPress(AR_NAVIGATOR_TYPE)}
-            underlayColor={'#68a0ff'} >
-
-            <Text style={localStyles.buttonText}>AR</Text>
-          </TouchableHighlight>
-
-          <TouchableHighlight style={localStyles.buttons}
-            onPress={this._getExperienceButtonOnPress(VR_NAVIGATOR_TYPE)}
-            underlayColor={'#68a0ff'} >
-
-            <Text style={localStyles.buttonText}>VR</Text>
-          </TouchableHighlight>
+              <Text style={localStyles.buttonText}>Let's GO!</Text>
+            </TouchableHighlight>
+          </View>
         </View>
-      </View>
     );
   }
 
@@ -104,33 +108,29 @@ export default class ViroSample extends Component {
     );
   }
 
-  // Returns the ViroSceneNavigator which will start the VR experience
-  _getVRNavigator() {
-    return (
-      <ViroVRSceneNavigator {...this.state.sharedProps}
-        initialScene={{scene: InitialVRScene}} onExitViro={this._exitViro}/>
-    );
-  }
-
   // This function returns an anonymous/lambda function to be used
   // by the experience selector buttons
-  _getExperienceButtonOnPress(navigatorType) {
+  _navigate(navigatorType) {
     return () => {
       this.setState({
         navigatorType : navigatorType
       })
     }
   }
-
-  // This function "exits" Viro by setting the navigatorType to UNSET.
-  _exitViro() {
-    this.setState({
-      navigatorType : UNSET
-    })
-  }
 }
 
 var localStyles = StyleSheet.create({
+  image:{
+    width: 150,
+    height: 120
+  },
+  screenImageContainer:{
+    backgroundColor: 'white',
+    width:"50%", height:"25%",
+    alignItems:'center',
+    justifyContent: "center",
+    borderRadius: 300
+  },
   viroContainer :{
     flex : 1,
     backgroundColor: "black",
@@ -139,25 +139,29 @@ var localStyles = StyleSheet.create({
     flex : 1,
     flexDirection: 'row',
     alignItems:'center',
-    backgroundColor: "black",
+    backgroundColor:'transparent'
   },
   inner: {
     flex : 1,
     flexDirection: 'column',
     alignItems:'center',
-    backgroundColor: "black",
+    backgroundColor: "transparent",
   },
   titleText: {
+    fontFamily:'serif',
     paddingTop: 30,
     paddingBottom: 20,
-    color:'#fff',
+    paddingLeft: 15,
+    paddingRight:15,
+    color:'#20b4ff',
     textAlign:'center',
-    fontSize : 25
+    fontSize : 20
   },
   buttonText: {
     color:'#fff',
     textAlign:'center',
-    fontSize : 20
+    fontSize : 20,
+    fontFamily:'serif'
   },
   buttons : {
     height: 80,
@@ -169,16 +173,16 @@ var localStyles = StyleSheet.create({
     backgroundColor:'#68a0cf',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#fff',
+    borderColor: '#f5f6f7',
   },
   exitButton : {
-    height: 50,
-    width: 100,
-    paddingTop:10,
-    paddingBottom:10,
+    height: 80,
+    width: 150,
+    paddingTop:20,
+    paddingBottom:20,
     marginTop: 10,
     marginBottom: 10,
-    backgroundColor:'#68a0cf',
+    backgroundColor:'#cf1408',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#fff',
