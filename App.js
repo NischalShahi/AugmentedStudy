@@ -13,6 +13,7 @@ import {
   ViroARSceneNavigator
 } from 'react-viro';
 import * as firebase from "react-native-firebase";
+import Loader from "./js/Loader";
 
 
 var sharedProps = {
@@ -66,7 +67,7 @@ export default class ViroSample extends Component {
 
   render() {
 
-    if (!this.state.initialized) return <View><Text>Loading</Text></View>
+    if (!this.state.initialized) return <Loader/>
 
     if (this.state.navigatorType == UNSET) {
       return this._getExperienceSelector();
@@ -108,8 +109,6 @@ export default class ViroSample extends Component {
     );
   }
 
-  // This function returns an anonymous/lambda function to be used
-  // by the experience selector buttons
   _navigate(navigatorType) {
     return () => {
       this.setState({
