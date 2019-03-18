@@ -1,40 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
+import {View, ActivityIndicator, Textm, Image, Text} from 'react-native';
 
-import {Image, StyleSheet, Text, View} from 'react-native';
+const Loader = () => (
+    <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+    >
+      <ActivityIndicator size={80} color={"#20b4ff"}  />
+      <Text style={{ marginTop: 20, fontFamily: 'Roboto',fontSize:20, color:"#20b4ff"}}>Fetching Data...</Text>
+    </View>
+);
 
-export default class Loader extends Component {
-  render() {
-    return (
-        <View style={styles.container}>
-          <View style={styles.screenImageContainer}>
-          <Text>Loading...</Text>
-          </View>
-        </View>
-
-    );
-  }
-
-}
-
-var styles = StyleSheet.create({
-  container: {
-    flex : 1,
-    flexDirection: 'row',
-    alignItems:'center',
-    justifyContent: "center",
-    backgroundColor:'transparent'
-  },
-  image:{
-    width: 150,
-    height: 120
-  },
-  screenImageContainer:{
-    backgroundColor: 'white',
-    width:"50%", height:"25%",
-    alignItems:'center',
-    justifyContent: "center",
-    borderRadius: 300
-  },
-});
-
-module.exports = Loader;
+export default Loader;

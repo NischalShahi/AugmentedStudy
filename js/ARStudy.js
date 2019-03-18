@@ -13,9 +13,10 @@ import {
     ViroARTrackingTargets,
     ViroSphere,
     ViroSpotLight,
-    ViroQuad,
+    ViroQuad, ViroSpinner, ViroAnimatedImage, ViroSound,
 } from 'react-viro';
 import * as firebase from "react-native-firebase";
+import {Alert} from "react-native";
 
 
 
@@ -25,7 +26,7 @@ module.exports = (data) => {
 
     // const data = [
     //     {
-    //         diffuse: '"https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/diffuse%2F10021_Giraffe_v05.jpg?alt=media&token=f36bd8fe-90d6-4a3b-baf4-32e872695cda"',
+    //         diffuse: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/diffuse%2F10021_Giraffe_v05.jpg?alt=media&token=f36bd8fe-90d6-4a3b-baf4-32e872695cda",
     //         mtl: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/mtl%2F10021_Giraffe_v04.mtl?alt=media&token=29444c30-e5ab-4eb4-91a1-2d1fbc0852b8",
     //         obj: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/obj%2F10021_Giraffe_v04.obj?alt=media&token=f137167b-73ed-46e4-a2b2-1231d6d470b5",
     //         rotateX: "-=75",
@@ -53,6 +54,7 @@ module.exports = (data) => {
         state = {
             playAnim: false,
             animate:{},
+            clicked: false
             // data:[]
         };
 
@@ -60,7 +62,7 @@ module.exports = (data) => {
 
             return <ViroARScene>
 
-                <ViroLightingEnvironment source={require('./res/ar/ar.hdr')}/>
+                <ViroLightingEnvironment source={{uri:"https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/LightningEnvironment%2Far.hdr?alt=media&token=8d05c4a1-da90-455d-a3ba-37793a91f6e1"}}/>
 
 
 
@@ -85,9 +87,11 @@ module.exports = (data) => {
                             resources={[{uri: obj.mtl}, //.mtl
                             ]}
                             type="OBJ"
+                            onClick={this._onClick}
                             materials={obj.name}
                             animation={{name:`scale${obj.name}`, run:!this.state.animate[obj.name],}} />
 
+                        {this.state.clicked === true && <ViroSound onFinish={this._onFinish} source={{uri: obj.sound}}/>}
 
 
                         <ViroSpotLight
@@ -113,11 +117,19 @@ module.exports = (data) => {
 
             </ViroARScene>
         }
+        _onClick = (source) => {
+            this.setState({clicked: true})
+        };
+        _onFinish = (source) => {
+            this.setState({clicked: false})
+        }
     }
+
 
     let materialMap = {};
     let targetMap = {};
     let animationMap = {};
+
 
     data.forEach(item => {
         materialMap[item.name]= {

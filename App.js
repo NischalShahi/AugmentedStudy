@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
-import {Image} from 'react-native';
-import {
+import { Image,Alert,
+  NetInfo,
+  TouchableOpacity,
   AppRegistry,
   Text,
   View,
   StyleSheet,
   PixelRatio,
-  TouchableHighlight,
-} from 'react-native';
+  TouchableHighlight, } from 'react-native';
 
 import {
   ViroARSceneNavigator
 } from 'react-viro';
 import * as firebase from "react-native-firebase";
 import Loader from "./js/Loader";
+import TargetLess from "./js/TargetLess";
 
 
 var sharedProps = {
@@ -23,7 +24,8 @@ var sharedProps = {
 var InitialARScene;
 
 var UNSET = "UNSET";
-var AR_NAVIGATOR_TYPE = "AR";
+var AR_MAIN = "AR";
+var AR_TARGET_LESS = "ART"
 
 var defaultNavigatorType = UNSET;
 
@@ -31,6 +33,26 @@ export default class ViroSample extends Component {
   state = {
     initialized: false
   }
+
+
+  CheckConnectivity = () => {
+      NetInfo.isConnected.fetch().then(isConnected => {
+        if (!isConnected) {
+          Alert.alert("You are offline! \n Active internet connection required..");
+        }
+      });
+  };
+
+  handleFirstConnectivityChange = isConnected => {
+    NetInfo.isConnected.removeEventListener(
+        "connectionChange",
+        this.handleFirstConnectivityChange
+    );
+
+    if (isConnected === false) {
+      Alert.alert("You are offline!");
+    }
+  };
 
   constructor() {
     super();
@@ -42,6 +64,7 @@ export default class ViroSample extends Component {
     this._getExperienceSelector = this._getExperienceSelector.bind(this);
     this._getARNavigator = this._getARNavigator.bind(this);
     this._navigate = this._navigate.bind(this);
+    this.CheckConnectivity();
   }
 
   componentDidMount(){
@@ -65,25 +88,29 @@ export default class ViroSample extends Component {
     })
   }
 
-  render() {
+
+    render() {
 
     if (!this.state.initialized) return <Loader/>
 
     if (this.state.navigatorType == UNSET) {
       return this._getExperienceSelector();
-    } else if (this.state.navigatorType == AR_NAVIGATOR_TYPE) {
+    } else if (this.state.navigatorType == AR_MAIN) {
       return this._getARNavigator();
+    }else if (this.state.navigatorType == AR_TARGET_LESS) {
+      InitialARScene = require('./js/TargetLess');
+      return this._getTargetLess();
     }
   }
 
   _getExperienceSelector() {
     return (
-        <View style={localStyles.outer} >
-          <View style={localStyles.inner} >
+          <View style={localStyles.mainContainer} >
+            <Text style={localStyles.largeTitle}>AR STUDY</Text>
             <View style={localStyles.screenImageContainer}>
             <Image
                 style={localStyles.image}
-                source={require('./assets/animalicon.jpg')}
+                source={{uri: 'https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/icon%2Fanimalicon.jpg?alt=media&token=2ac33808-9287-4c26-9a6c-982f75f529e7'}}
             />
             </View>
             <Text style={localStyles.titleText}>
@@ -91,13 +118,20 @@ export default class ViroSample extends Component {
             </Text>
 
             <TouchableHighlight style={localStyles.buttons}
-              onPress={this._navigate(AR_NAVIGATOR_TYPE)}
-              underlayColor={'#68a0ff'} >
+              onPress={this._navigate(AR_MAIN)}
+              underlayColor={'#42b03f'} >
 
               <Text style={localStyles.buttonText}>Let's GO!</Text>
             </TouchableHighlight>
+
+
+            <TouchableOpacity style={localStyles.buttons}
+                                onPress={this._navigate(AR_TARGET_LESS)}
+                                activeOpacity={0.8} >
+
+              <Text style={localStyles.buttonText}>Guide</Text>
+            </TouchableOpacity>
           </View>
-        </View>
     );
   }
 
@@ -106,6 +140,13 @@ export default class ViroSample extends Component {
     return (
       <ViroARSceneNavigator {...this.state.sharedProps}
         initialScene={{scene: InitialARScene}} />
+    );
+  }
+
+  _getTargetLess(){
+    return(
+        <ViroARSceneNavigator {...this.state.sharedProps}
+                              initialScene={{scene: InitialARScene}} />
     );
   }
 
@@ -128,23 +169,21 @@ var localStyles = StyleSheet.create({
     width:"50%", height:"25%",
     alignItems:'center',
     justifyContent: "center",
-    borderRadius: 300
+    borderRadius: 300,
+    borderColor: '#20b4ff',
+    borderWidth: 2,
+    elevation: 5
   },
   viroContainer :{
     flex : 1,
     backgroundColor: "black",
   },
-  outer : {
-    flex : 1,
-    flexDirection: 'row',
-    alignItems:'center',
-    backgroundColor:'transparent'
-  },
-  inner: {
+  mainContainer: {
     flex : 1,
     flexDirection: 'column',
     alignItems:'center',
     backgroundColor: "transparent",
+    justifyContent: 'center'
   },
   titleText: {
     fontFamily:'serif',
@@ -156,6 +195,16 @@ var localStyles = StyleSheet.create({
     textAlign:'center',
     fontSize : 20
   },
+  largeTitle: {
+    fontFamily:'serif',
+    paddingBottom: 20,
+    paddingLeft: 15,
+    paddingRight:15,
+    marginBottom:20,
+    color:'#20b4ff',
+    textAlign:'center',
+    fontSize : 40
+  },
   buttonText: {
     color:'#fff',
     textAlign:'center',
@@ -163,6 +212,7 @@ var localStyles = StyleSheet.create({
     fontFamily:'serif'
   },
   buttons : {
+    elevation:5,
     height: 80,
     width: 150,
     paddingTop:20,
@@ -172,7 +222,7 @@ var localStyles = StyleSheet.create({
     backgroundColor:'#68a0cf',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#f5f6f7',
+    borderColor: '#f5f6f7'
   },
   exitButton : {
     height: 80,
