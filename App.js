@@ -14,7 +14,7 @@ import {
 } from 'react-viro';
 import * as firebase from "react-native-firebase";
 import Loader from "./js/Loader";
-import TargetLess from "./js/TargetLess";
+import Guide from "./js/Guide";
 
 
 var sharedProps = {
@@ -79,7 +79,6 @@ export default class ViroSample extends Component {
 
         InitialARScene = require('./js/ARStudy')(data);
 
-        console.log(data);
 
         this.setState({
           initialized: true
@@ -98,8 +97,8 @@ export default class ViroSample extends Component {
     } else if (this.state.navigatorType == AR_MAIN) {
       return this._getARNavigator();
     }else if (this.state.navigatorType == AR_TARGET_LESS) {
-      InitialARScene = require('./js/TargetLess');
-      return this._getTargetLess();
+      InitialARScene = require('./js/Guide');
+      return this.guide();
     }
   }
 
@@ -143,10 +142,9 @@ export default class ViroSample extends Component {
     );
   }
 
-  _getTargetLess(){
+  guide(){
     return(
-        <ViroARSceneNavigator {...this.state.sharedProps}
-                              initialScene={{scene: InitialARScene}} />
+        <Guide/>
     );
   }
 

@@ -4803,6 +4803,16 @@ react-native-firebase@^5.1.1:
     opencollective-postinstall "^2.0.0"
     prop-types "^15.6.2"
 
+react-native-sideswipe@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-sideswipe/-/react-native-sideswipe-1.4.2.tgz#9e3e23077884838c5592533bf09ffd7977283b74"
+  integrity sha512-WhxmXVWijMx1smPlWQwSrzklq9284xsZEnArzQLvksA/23Tsic4AbsMOkqHZB1kjiLEBBbdspLyie5mOnf9zUw==
+
+react-native-ticker@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-ticker/-/react-native-ticker-2.2.1.tgz#faf4e8984f5b712dbd2eccf3256e185d6a1f38d3"
+  integrity sha512-PCKz2eje7IHZMQZ1/4sSA8GEvs4gSA/0Y+GJIDaaItm3LA25KxYt0wD3NPF8ELjyX/DUCVUR+mjlSUJgSF2m0g==
+
 react-native@0.55.1:
   version "0.55.1"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.55.1.tgz#0ca06b3e1bcb8ddfb56b916a3853d423f9ee6439"

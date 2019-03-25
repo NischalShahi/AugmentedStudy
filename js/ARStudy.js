@@ -1,6 +1,4 @@
-'use strict';
-
-import React, { Component } from 'react';
+import React from 'react';
 
 import {
     ViroARScene,
@@ -11,12 +9,9 @@ import {
     ViroLightingEnvironment,
     ViroARImageMarker,
     ViroARTrackingTargets,
-    ViroSphere,
     ViroSpotLight,
-    ViroQuad, ViroSpinner, ViroAnimatedImage, ViroSound,
+    ViroQuad, ViroSpinner, ViroAnimatedImage, ViroSound, ViroButton,
 } from 'react-viro';
-import * as firebase from "react-native-firebase";
-import {Alert} from "react-native";
 
 
 

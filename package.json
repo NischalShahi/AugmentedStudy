@@ -10,12 +10,14 @@
     "react": "16.3.1",
     "react-native": "0.55.1",
     "react-native-firebase": "^5.1.1",
+    "react-native-sideswipe": "^1.4.2",
     "react-viro": "2.12.0"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
     "babel-preset-react-native": "4.0.1",
     "jest": "23.6.0",
+    "react-native-ticker": "^2.2.1",
     "react-test-renderer": "16.3.1"
   },
   "jest": {
