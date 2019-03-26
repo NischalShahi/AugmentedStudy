@@ -16,41 +16,13 @@ import {
 
 
 module.exports = (data) => {
-    // const fData = firebase.database().ref();
-
-
-    // const data = [
-    //     {
-    //         diffuse: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/diffuse%2F10021_Giraffe_v05.jpg?alt=media&token=f36bd8fe-90d6-4a3b-baf4-32e872695cda",
-    //         mtl: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/mtl%2F10021_Giraffe_v04.mtl?alt=media&token=29444c30-e5ab-4eb4-91a1-2d1fbc0852b8",
-    //         obj: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/obj%2F10021_Giraffe_v04.obj?alt=media&token=f137167b-73ed-46e4-a2b2-1231d6d470b5",
-    //         rotateX: "-=75",
-    //         scaleX:.03,
-    //         scaleY:.03,
-    //         scaleZ:.03,
-    //         name: 'giraffe',
-    //         targetUri: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/targets%2Fgiraffe.jpg?alt=media&token=9a11cd71-3a89-4a6b-8790-a51467ee94c4",
-    //     },
-    //     {
-    //         diffuse: 'https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/diffuse%2Fdeer_defuse.jpg?alt=media&token=ba064ede-82f0-4e49-9128-8989010d7778',
-    //         mtl: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/mtl%2FDeer_m.mtl?alt=media&token=ee465c8d-9a57-4c1e-9916-58a44e080135",
-    //         obj: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/obj%2FDeer_o.obj?alt=media&token=248802fa-03c6-46a2-af0c-50897f971df7",
-    //         rotateX: "+=0",
-    //         scaleX:.3,
-    //         scaleY:.3,
-    //         scaleZ:.3,
-    //         name: 'deer',
-    //         targetUri: "https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/targets%2Fdeer.jpg?alt=media&token=3b7f3847-4479-4ec8-9ef0-c75281411d82",
-    //     }
-    // ]
 
 
     class ARStudy extends React.PureComponent   {
         state = {
             playAnim: false,
             animate:{},
-            clicked: false
-            // data:[]
+            clicked: {}
         };
 
         render(){
@@ -58,7 +30,6 @@ module.exports = (data) => {
             return <ViroARScene>
 
                 <ViroLightingEnvironment source={{uri:"https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/LightningEnvironment%2Far.hdr?alt=media&token=8d05c4a1-da90-455d-a3ba-37793a91f6e1"}}/>
-
 
 
 
@@ -82,11 +53,11 @@ module.exports = (data) => {
                             resources={[{uri: obj.mtl}, //.mtl
                             ]}
                             type="OBJ"
-                            onClick={this._onClick}
+                            onClick={this._onClick(obj.name)}
                             materials={obj.name}
                             animation={{name:`scale${obj.name}`, run:!this.state.animate[obj.name],}} />
 
-                        {this.state.clicked === true && <ViroSound onFinish={this._onFinish} source={{uri: obj.sound}}/>}
+                        {this.state.clicked[obj.name] === true && <ViroSound onFinish={this._onFinish} source={{uri: obj.sound}}/>}
 
 
                         <ViroSpotLight
@@ -112,11 +83,13 @@ module.exports = (data) => {
 
             </ViroARScene>
         }
-        _onClick = (source) => {
-            this.setState({clicked: true})
+        _onClick = (name) => (source) => {
+            this.setState({clicked: {
+                [[name]]: true
+                }})
         };
         _onFinish = (source) => {
-            this.setState({clicked: false})
+            this.setState({clicked: {}})
         }
     }
 

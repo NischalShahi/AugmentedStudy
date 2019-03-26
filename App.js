@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import { Image,Alert,
   NetInfo,
   TouchableOpacity,
-  AppRegistry,
   Text,
   View,
   StyleSheet,
-  PixelRatio,
   TouchableHighlight, } from 'react-native';
 
 import {
@@ -25,7 +23,7 @@ var InitialARScene;
 
 var UNSET = "UNSET";
 var AR_MAIN = "AR";
-var AR_TARGET_LESS = "ART"
+var GUIDE = "GUIDE";
 
 var defaultNavigatorType = UNSET;
 
@@ -96,8 +94,7 @@ export default class ViroSample extends Component {
       return this._getExperienceSelector();
     } else if (this.state.navigatorType == AR_MAIN) {
       return this._getARNavigator();
-    }else if (this.state.navigatorType == AR_TARGET_LESS) {
-      InitialARScene = require('./js/Guide');
+    }else if (this.state.navigatorType == GUIDE) {
       return this.guide();
     }
   }
@@ -125,7 +122,7 @@ export default class ViroSample extends Component {
 
 
             <TouchableOpacity style={localStyles.buttons}
-                                onPress={this._navigate(AR_TARGET_LESS)}
+                                onPress={this._navigate(GUIDE)}
                                 activeOpacity={0.8} >
 
               <Text style={localStyles.buttonText}>Guide</Text>
