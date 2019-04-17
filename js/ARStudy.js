@@ -9,7 +9,9 @@ import {
     ViroLightingEnvironment,
     ViroARImageMarker,
     ViroARTrackingTargets,
+    ViroFlexView,
     ViroSpotLight,
+    ViroImage,
     ViroQuad, ViroSpinner, ViroAnimatedImage, ViroSound, ViroButton,
 } from 'react-viro';
 
@@ -88,8 +90,10 @@ module.exports = (data) => {
                 [[name]]: true
                 }})
         };
-        _onFinish = (source) => {
-            this.setState({clicked: {}})
+        _onFinish = (name) => (source) => {
+            this.setState({clicked: {
+                    [[name]]: false
+                }})
         }
     }
 
