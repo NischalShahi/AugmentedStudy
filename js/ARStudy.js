@@ -33,8 +33,6 @@ module.exports = (data) => {
 
                 <ViroLightingEnvironment source={{uri:"https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/LightningEnvironment%2Far.hdr?alt=media&token=8d05c4a1-da90-455d-a3ba-37793a91f6e1"}}/>
 
-
-
                 {
                     data.map(obj => <ViroARImageMarker key={obj.name} target={obj.name} onAnchorFound={()=>{
                         {
@@ -59,7 +57,7 @@ module.exports = (data) => {
                             materials={obj.name}
                             animation={{name:`scale${obj.name}`, run:!this.state.animate[obj.name],}} />
 
-                        {this.state.clicked[obj.name] === true && <ViroSound onFinish={this._onFinish} source={{uri: obj.sound}}/>}
+                        {this.state.clicked[obj.name] === true && <ViroSound onFinish={this._onFinish(obj.name)} source={{uri: obj.sound}}/>}
 
 
                         <ViroSpotLight

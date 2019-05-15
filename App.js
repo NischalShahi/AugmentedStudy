@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Image,Alert,
+import {
+  Image, Alert,
   NetInfo,
   TouchableOpacity,
   Text,
   View,
   StyleSheet,
-  TouchableHighlight, } from 'react-native';
+  TouchableHighlight, Linking,
+} from 'react-native';
 
 import {
   ViroARSceneNavigator
@@ -32,6 +34,10 @@ export default class ViroSample extends Component {
     initialized: false
   }
 
+
+  openLink = () => {
+    Linking.openURL('https://drive.google.com/open?id=1IJ1Z6CFMdABJV8XXC-W_oolR4NnHhMgW')
+  };
 
   CheckConnectivity = () => {
       NetInfo.isConnected.fetch().then(isConnected => {
@@ -127,6 +133,10 @@ export default class ViroSample extends Component {
 
               <Text style={localStyles.buttonText}>Guide</Text>
             </TouchableOpacity>
+
+
+
+            <Text style={{ color: '#0018ff',textDecorationLine: 'underline', marginTop:20 }} onPress={() => this.openLink()}  >Download scannable Images</Text>
           </View>
     );
   }
