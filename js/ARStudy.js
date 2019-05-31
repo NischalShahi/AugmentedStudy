@@ -9,10 +9,9 @@ import {
     ViroLightingEnvironment,
     ViroARImageMarker,
     ViroARTrackingTargets,
-    ViroFlexView,
     ViroSpotLight,
-    ViroImage,
-    ViroQuad, ViroSpinner, ViroAnimatedImage, ViroSound, ViroButton,
+    ViroQuad,
+    ViroSound
 } from 'react-viro';
 
 

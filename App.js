@@ -6,7 +6,9 @@ import {
   Text,
   View,
   StyleSheet,
-  TouchableHighlight, Linking,
+  TouchableHighlight,
+  Linking,
+  BackHandler
 } from 'react-native';
 
 import {
@@ -32,7 +34,7 @@ var defaultNavigatorType = UNSET;
 export default class ViroSample extends Component {
   state = {
     initialized: false
-  }
+  };
 
 
   openLink = () => {
@@ -71,7 +73,20 @@ export default class ViroSample extends Component {
     this.CheckConnectivity();
   }
 
+
+  onBackButtonPressAndroid = () => {
+    this.setState({
+      navigatorType: UNSET
+    });
+    return true;
+  };
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressAndroid);
+  }
+
   componentDidMount(){
+
     const fData = firebase.database().ref();
     fData.on('value',snap => {
 
@@ -88,6 +103,9 @@ export default class ViroSample extends Component {
           initialized: true
         })
       });
+
+      BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressAndroid)
+
     })
   }
 
@@ -187,7 +205,7 @@ var localStyles = StyleSheet.create({
     flex : 1,
     flexDirection: 'column',
     alignItems:'center',
-    backgroundColor: "transparent",
+    backgroundColor: "white",
     justifyContent: 'center'
   },
   titleText: {

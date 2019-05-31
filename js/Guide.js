@@ -40,9 +40,9 @@ export default class Guide extends Component {
             : <View style={styles.container}>
                 <StatusBar barStyle="light-content" />
                 <Image
-                    resizeMode="contain"
+                    resizeMode="cover"
                     style={styles.fill}
-                    source={require('./assets/space-bg.jpg')}
+                    source={{uri:'https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/manual%2Fspace-bg.jpg?alt=media&token=9dd1922c-c607-4dc1-8129-2271a6c57ba5'}}
                 />
                 <SideSwipe
                     data={manual}
@@ -84,6 +84,8 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
+        width: '100%',
+        height: '100%'
     },
     title: {
         fontSize: 32,
