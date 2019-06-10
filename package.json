@@ -7,10 +7,13 @@
     "test": "jest"
   },
   "dependencies": {
+    "@babel/runtime": "^7.4.5",
     "react": "16.3.1",
     "react-native": "0.55.1",
     "react-native-firebase": "^5.1.1",
+    "react-native-gesture-handler": "1.0.5",
     "react-native-sideswipe": "^1.4.2",
+    "react-native-vector-icons": "^6.5.0",
     "react-navigation": "^3.11.0",
     "react-viro": "2.12.0"
   },

@@ -13,6 +13,8 @@ import {
     ViroQuad,
     ViroSound
 } from 'react-viro';
+import OfflineNotice from "../screens/components/OfflineNotice";
+import {View} from "react-native";
 
 
 
@@ -28,7 +30,8 @@ module.exports = (data) => {
 
         render(){
 
-            return <ViroARScene>
+            return (
+                <ViroARScene>
 
                 <ViroLightingEnvironment source={{uri:"https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/LightningEnvironment%2Far.hdr?alt=media&token=8d05c4a1-da90-455d-a3ba-37793a91f6e1"}}/>
 
@@ -81,6 +84,7 @@ module.exports = (data) => {
                 }
 
             </ViroARScene>
+            )
         }
         _onClick = (name) => (source) => {
             this.setState({clicked: {

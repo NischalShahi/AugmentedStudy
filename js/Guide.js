@@ -7,11 +7,12 @@ import {
     StyleSheet,
     Dimensions,
     StatusBar,
-    Platform,
+    Platform, ScrollView,
 } from 'react-native';
 import SideSwipe from 'react-native-sideswipe';
 
 import { Manual } from './components';
+import OfflineNotice from "../screens/components/OfflineNotice";
 
 const { width } = Dimensions.get('window');
 
@@ -38,6 +39,7 @@ export default class Guide extends Component {
                 <ActivityIndicator color="white" />
             </View>
             : <View style={styles.container}>
+                <OfflineNotice />
                 <StatusBar barStyle="light-content" />
                 <Image
                     resizeMode="cover"
