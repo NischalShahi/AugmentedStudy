@@ -20,6 +20,15 @@ export default class SignUp extends React.Component {
         headerLeft: null
     };
 
+    constructor() {
+        super();
+        this.ref = firebase.firestore().collection('users');
+        this.state = {
+            userName: '',
+        };
+    }
+
+
     componentDidMount() {
             this.state.loading && this.setState({loading: false});
     }
@@ -29,14 +38,28 @@ export default class SignUp extends React.Component {
         this.state.confirmMessage && this.setState({confirmMessage:null});
         this.state.errorMessage && this.setState({errorMessage:null});
 
-        if(this.state.email && this.state.password && this.state.confirmPassword) {
+        if(this.state.email && this.state.password && this.state.confirmPassword && this.state.userName) {
 
             if(this.state.password.length >= 6) {
                     if(this.state.password === this.state.confirmPassword){
                         firebase
                             .auth()
                             .createUserWithEmailAndPassword(this.state.email.trimRight(), this.state.password)
-                            .then(() => this.props.navigation.navigate('Main'))
+                            .then(() => {
+
+                                const { currentUser } = firebase.auth();
+                                this.setState({ currentUser });
+
+                                this.ref.add({
+                                    userId: this.state.currentUser.uid,
+                                    userName: this.state.userName,
+                                }).then(() => {
+                                    this.setState({userName:''});
+                                    this.props.navigation.navigate('Main')
+                                }).catch(error => {
+                                    this.setState({errorMessage: "Something went wrong, Please try again later."})
+                                })
+                            })
                             .catch(error => {
                                 if (error.toString() === "Error: The email address is already in use by another account."){
                                     this.setState({errorMessage: "User already exists."});
@@ -89,11 +112,19 @@ export default class SignUp extends React.Component {
                 </View>
 
                 <Text style={styles.title}>Sign Up</Text>
+
                 {this.state.errorMessage &&
                 <Text style={{ color: 'red', margin: 5 }}>
                     {this.state.errorMessage}
                 </Text>}
 
+                <TextInput
+                    underlineColorAndroid='transparent'
+                    placeholder="Display Name"
+                    style={styles.textInput}
+                    onChangeText={userName => this.setState({ userName })}
+                    value={this.state.userName}
+                />
                 <TextInput
                     underlineColorAndroid='transparent'
                     placeholder="Email"
@@ -140,7 +171,7 @@ export default class SignUp extends React.Component {
                             </Text>}
                         </TouchableOpacity>
                     </View>
-                    <View>
+                    <View style={{ paddingBottom: 10}}>
                         <Text style={{ marginBottom: 5 }}>Already Have an Account?</Text>
                         <TouchableOpacity
                             activeOpacity={0.6}
@@ -163,7 +194,8 @@ export default class SignUp extends React.Component {
 const styles = {
     container: {
         flex:1,
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingTop: 5
     },
     textInput: {
         height: 40,

@@ -108,7 +108,7 @@ export default class Login extends React.Component {
                             </Text>}
                         </TouchableOpacity>
                     </View>
-                    <View>
+                    <View style={{ paddingBottom: 10}}>
                         <Text style={{ marginBottom: 5 }}>Don't have an Account?</Text>
 
                         <TouchableOpacity
@@ -131,7 +131,8 @@ export default class Login extends React.Component {
 const styles = {
     container: {
         flex:1,
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingTop: 5
     },
     button:{
     flexDirection:'row',

@@ -36,7 +36,8 @@ var defaultNavigatorType = UNSET;
 export default class ViroSample extends Component {
   state = {
     initialized: false,
-    currentUser: null
+    currentUser: null,
+    userName: ''
   };
 
 
@@ -77,6 +78,20 @@ export default class ViroSample extends Component {
 
   constructor() {
     super();
+
+    var docRef = firebase.firestore().collection("users")
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+
+            const { currentUser } = firebase.auth();
+            this.setState({ currentUser });
+
+            if (doc && doc.exists && doc.data().userId === this.state.currentUser.uid ) {
+              this.setState({userName: doc.data().userName});
+            }
+          });
+        });
 
     this.state = {
       navigatorType : defaultNavigatorType,
@@ -142,21 +157,25 @@ export default class ViroSample extends Component {
 
   _getExperienceSelector() {
     return (
-        <ScrollView style={{ flex:1 }} contentContainerStyle={{ flex: 1}}>
-          <View
+        <View style={{ flex: 1 }}>
+          <View style={{ flex: 0.07 }}>
+            <View
               style={{
-                height: 50,
+                height: 57,
                 width:'100%',
                 elevation: 2,
+                borderBottomColor:'transparent',
+                borderBottomWidth:1,
                 backgroundColor:'#3c3c3c',
                 alignItems:'flex-start',
                 justifyContent:'space-between',
                 padding: 10,
-                flexDirection:'row'
+                flexDirection:'row',
+                position:'absolute',
+                top: 0
               }}>
             <View style={{
               padding:10,
-              fontSize: 14,
               alignItems:'center',
               justifyContent:'flex-end',
               flexDirection:'row',
@@ -164,12 +183,12 @@ export default class ViroSample extends Component {
             >
               <Icon color={'white'} size={22} name={'account-circle'}/>
               <Text style={{
-              color:'white',
-              fontSize: 14,
-              marginLeft: 5
-            }}>
-              {this.state.currentUser && this.state.currentUser.email.split('@')[0]}
-            </Text>
+                color:'white',
+                fontSize: 14,
+                marginLeft: 5
+              }}>
+                {this.state.userName && this.state.userName}
+              </Text>
             </View>
             <TouchableOpacity style={ localStyles.logOutButton }
                               onPress={this.signOutUser}
@@ -187,39 +206,47 @@ export default class ViroSample extends Component {
               </Text>
             </TouchableOpacity>
           </View>
+          </View>
           <View style={{ flex:0.04 }}>
             <OfflineNotice />
           </View>
-          <View style={localStyles.mainContainer} >
-            <Text style={localStyles.largeTitle}>AR STUDY</Text>
-            <View style={localStyles.screenImageContainer}>
-            <Image
-                style={localStyles.image}
-                source={{uri: 'https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/icon%2Fanimalicon.jpg?alt=media&token=2ac33808-9287-4c26-9a6c-982f75f529e7'}}
-            />
-            </View>
-            <Text style={localStyles.titleText}>
-              Are you ready for education with AR?
-            </Text>
+          <View style={{ flex: 0.9 }}>
+            <ScrollView style={{ flex:1 }}>
+                <View style={localStyles.mainContainer} >
+                  <View style={{ flex:0.04, backgroundColor:'red' }}>
+                    <OfflineNotice />
+                  </View>
+                  <Text style={localStyles.largeTitle}>AR STUDY</Text>
+                  <View style={localStyles.screenImageContainer}>
+                  <Image
+                      style={localStyles.image}
+                      source={{uri: 'https://firebasestorage.googleapis.com/v0/b/augmentedstudy.appspot.com/o/icon%2Fanimalicon.jpg?alt=media&token=2ac33808-9287-4c26-9a6c-982f75f529e7'}}
+                  />
+                  </View>
+                  <Text style={localStyles.titleText}>
+                    Are you ready for education with AR?
+                  </Text>
 
-            <TouchableHighlight style={localStyles.buttons}
-              onPress={this._navigate(AR_MAIN)}
-              underlayColor={'#42b03f'} >
+                  <TouchableHighlight style={localStyles.buttons}
+                    onPress={this._navigate(AR_MAIN)}
+                    underlayColor={'#42b03f'} >
 
-              <Text style={localStyles.buttonText}>Let's GO!</Text>
-            </TouchableHighlight>
+                    <Text style={localStyles.buttonText}>Let's GO!</Text>
+                  </TouchableHighlight>
 
+                  <TouchableOpacity style={localStyles.buttons}
+                                    onPress={this._navigate(GUIDE)}
+                                    activeOpacity={0.8} >
 
-            <TouchableOpacity style={localStyles.buttons}
-                                onPress={this._navigate(GUIDE)}
-                                activeOpacity={0.8} >
+                    <Text style={localStyles.buttonText}>Guide</Text>
+                  </TouchableOpacity>
 
-              <Text style={localStyles.buttonText}>Guide</Text>
-            </TouchableOpacity>
-            <Text style={{ color: '#0018ff',textDecorationLine: 'underline', marginTop:20 }} onPress={() => this.openLink()}  >Download scannable Images</Text>
+                  <Text style={{ color: '#0018ff',textDecorationLine: 'underline', marginTop:20, paddingBottom: 10 }} onPress={() => this.openLink()}  >Download scannable Images</Text>
 
-          </View>
+                </View>
         </ScrollView>
+          </View>
+        </View>
     );
   }
 
@@ -273,7 +300,8 @@ var localStyles = {
     flexDirection: 'column',
     alignItems:'center',
     backgroundColor: "white",
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingTop: 5
   },
   titleText: {
     fontFamily:'serif',
