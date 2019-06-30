@@ -11,7 +11,42 @@ import {
     ActivityIndicator
 } from 'react-native'
 import OfflineNotice from './components/OfflineNotice';
+import { AccessToken, LoginManager } from 'react-native-fbsdk';
 import firebase from 'react-native-firebase'
+
+export async function facebookLogin() {
+    try {
+        console.log('here');
+        const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+
+        if (result.isCancelled) {
+            // handle this however suites the flow of your app
+            throw new Error('User cancelled request');
+        }
+
+        console.log(`Login success with permissions: ${result.grantedPermissions.toString()}`);
+
+        // get the access token
+        const data = await AccessToken.getCurrentAccessToken();
+
+
+        if (!data) {
+            // handle this however suites the flow of your app
+            throw new Error('Something went wrong obtaining the users access token');
+        }
+
+        // create a new firebase credential with the token
+        const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
+
+        // login with credential
+        const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
+
+        //console.log('this',JSON.stringify(firebaseUserCredential.user.displayName))
+    } catch (e) {
+        console.error(e);
+    }
+
+}
 
 export default class Login extends React.Component {
 
@@ -95,7 +130,7 @@ export default class Login extends React.Component {
                     value={this.state.password}
                 />
                 <View style={{ marginTop: 20}}>
-                    <View style={{ marginBottom: 20 }}>
+                    <View style={{ marginBottom: 10 }}>
                         <TouchableOpacity
                             activeOpacity={0.6}
                             style={styles.button}
@@ -118,6 +153,18 @@ export default class Login extends React.Component {
                         >
                             <Text style={{ color:'white', fontSize: 14, fontWeight: 'bold'}}>
                                 Sign Up
+                            </Text>
+                        </TouchableOpacity>
+
+                        <Text style={{ marginTop: 20, textAlign: 'center', color: "#306CAC" }}> Try alternative login. </Text>
+
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            style={{ ...styles.button, backgroundColor:'#306CAC', borderRadius: 10, marginTop: 5 }}
+                            onPress={facebookLogin}
+                        >
+                            <Text style={{ color:'white', fontSize: 14, fontWeight: 'bold'}}>
+                                Facebook
                             </Text>
                         </TouchableOpacity>
                     </View>

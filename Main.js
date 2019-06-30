@@ -19,6 +19,7 @@ import * as firebase from "react-native-firebase";
 import Loader from "./js/Loader";
 import Guide from "./js/Guide";
 import OfflineNotice from "./screens/components/OfflineNotice";
+import {AccessToken, LoginManager} from "react-native-fbsdk";
 
 
 var sharedProps = {
@@ -32,6 +33,7 @@ var AR_MAIN = "AR";
 var GUIDE = "GUIDE";
 
 var defaultNavigatorType = UNSET;
+
 
 export default class ViroSample extends Component {
   state = {
@@ -118,7 +120,12 @@ export default class ViroSample extends Component {
   componentDidMount(){
 
     const { currentUser } = firebase.auth();
+
     this.setState({ currentUser });
+
+
+    this.setState({userName: currentUser._user.displayName});
+
     const fData = firebase.database().ref();
     fData.on('value',snap => {
 
